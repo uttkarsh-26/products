@@ -1,0 +1,7 @@
+name: Products
+description: Provides products content type and qr code functionality.
+package: Products
+type: module
+dependencies:
+  - drupal:node
+core_version_requirement: ^9.0

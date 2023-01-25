@@ -1,0 +1,11 @@
+{
+  "name": "drupal/products",
+  "type": "drupal-module",
+  "description": "Provides functionality for creating products",
+  "license": "GPL-2.0-or-later",
+  "require": {
+      "php": "^8.0",
+      "drupal/core": "^9.2 || ^10",
+      "bacon/bacon-qr-code": "^2.0"
+  }
+}

@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function products_theme():array {
+  return [
+    'product_qr_code' => [
+      'variables' => [
+        'image' => NULL,
+      ],
+    ],
+  ];
+}

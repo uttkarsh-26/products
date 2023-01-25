@@ -1,0 +1,52 @@
+<?php
+
+use Drupal\Core\File\Exception\FileException;
+use Drupal\file\FileInterface;
+
+/**
+* Implements hook_install().
+*/
+function products_install() {
+
+  /** @var \Drupal\file\FileRepositoryInterface $file_repository */
+  $file_repository = \Drupal::service('file.repository');
+  $file = NULL;
+  try {
+    $data = file_get_contents(__DIR__ . '/assets/images/unicorns.jpg');
+    $file = $file_repository->writeData($data, 'public://unicorns.jpg');
+  }
+  catch (FileException $e) {
+    \Drupal::logger('products')->error('Could not save the file due to: ' . $e->getMessage());
+    return FALSE;
+  }
+
+  $product_values = [
+    'type' => 'product',
+    'title' => 'Unicorn Iron On Patch',
+    'uid' => 1,
+    'body' => [
+      'value' => "SYNC Big unicorn embroidered embroidery Patches,patch for clothes,baby,kids,boy,girl,multi colour, applique decoration,t-shirt,unisex,backpacks, tops,hats,dresses,bagdes,iron on,biker,shirts,trouser,patches for art and craft and many more uses.Length : 10.5 CM, Width : 7 CM. You can paste it or can sew,stitch on clothes and many other uses. PACK OF 2 patches.",
+      'format' => 'full_html',
+    ],
+    'field_purchase_link' => [
+      'uri' => 'https://fakestoreapi.com/products/1',
+    ]
+  ];
+
+  // If file creation was successfull, add it to product.
+  if ($file instanceof FileInterface) {
+    $product_values['field_image'] = [
+      [
+        'target_id' => $file->id(),
+        'alt' => 'Unicorn Iron On Patch',
+      ],
+    ];
+  }
+
+  // Create the product node.
+  \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->create($product_values)
+    ->save();
+
+}
