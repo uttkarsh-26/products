@@ -8,6 +8,7 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -74,8 +75,13 @@ class ProductQRCodeBlock extends BlockBase implements ContainerFactoryPluginInte
       return $build;
     }
 
-    // Generate the QR code.
-    $this->generateQrCode($link_value[0]['uri'], $node->id());
+    try {
+      // Generate the QR code.
+      $this->generateQrCode($link_value[0]['uri'], $node->id());
+    }
+    catch (\Exception $e) {
+      \Drupal::logger('products')->error('Ran into errors.');
+    }
 
     $build = [
       '#theme' => 'product_qr_code',
@@ -88,10 +94,23 @@ class ProductQRCodeBlock extends BlockBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
+  public function getCacheTags() {
+    // With this when your node change your block will rebuild.
+    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+      // If there is node add its cachetag.
+      return Cache::mergeTags(parent::getCacheTags(), ['node:' . $node->id()]);
+    }
+    else {
+      // Return default tags instead.
+      return parent::getCacheTags();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheContexts() {
-    return [
-      'url',
-    ];
+    return Cache::mergeContexts(parent::getCacheContexts(), ['route']);
   }
 
   /**
@@ -124,8 +143,8 @@ class ProductQRCodeBlock extends BlockBase implements ContainerFactoryPluginInte
     return [
       '#theme' => 'image',
       '#uri' => self::QR_CODE_IMAGE_PATH . "product-$id-qrcode.png",
-      '#width' => '200px',
-      '#height' => '200px',
+      '#width' => '400px',
+      '#height' => '400px',
       '#alt' => $node->getTitle(),
     ];
   }
