@@ -96,7 +96,7 @@ class ProductQRCodeBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function getCacheTags() {
     // With this when your node change your block will rebuild.
-    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    if ($node = $this->routeMatch->getParameter('node')) {
       // If there is node add its cachetag.
       return Cache::mergeTags(parent::getCacheTags(), ['node:' . $node->id()]);
     }
