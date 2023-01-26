@@ -3,6 +3,13 @@
   "type": "drupal-module",
   "description": "Provides functionality for creating products",
   "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
   "require": {
       "php": "^8.0",
       "drupal/core": "^9.2 || ^10",
